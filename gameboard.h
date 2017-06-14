@@ -34,14 +34,17 @@ private:
     qreal wallFragmentWidth;
     qreal wallFragmentHeight;
     Player* player;
+    QGraphicsTextItem* gameOverText = new QGraphicsTextItem("GAME OVER");
 
     void drawGameBoard();
     void addWalls();
     void addPlayer();
     void addEnemies();
     Enemy* createEnemy();
+    void addGameOverText();
 public:
     GameBoard(qreal x, qreal y, qreal width, qreal height);
+    void showGameOverText();
 };
 
 #endif // GAMEBOARD_H

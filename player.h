@@ -8,19 +8,25 @@
 #include "direction.h"
 #include "pickup.h"
 #include "enemy.h"
+#include "gameboard.h"
 
 const float PLAYER_SPEED = 1.5f;
+
+class GameBoard;
 
 class Player : public QObject, public QGraphicsEllipseItem
 {
     Q_OBJECT
 public:
-    Player(qreal size);
+    Player(qreal size, GameBoard* gameBoard);
     void keyPressEvent(QKeyEvent *event);
 public slots:
     void move();
     void openCloseMouth();
 private:
+    QTimer* moveTimer = new QTimer();
+    QTimer* animationTimer = new QTimer();
+    GameBoard* gameBoard;
     Direction movingDirection;
     qreal size;
 

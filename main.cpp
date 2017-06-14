@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     GameBoard* gameBoard = new GameBoard(0, 0, 800, 600);
     QGraphicsView* view = new QGraphicsView(gameBoard);
 //    QGraphicsView::fitInView(gameBoard);
+//    view->fitInView(gameBoard->sceneRect());
     view->setMinimumWidth(800);
     view->setMinimumHeight(600);
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);

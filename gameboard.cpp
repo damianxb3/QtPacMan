@@ -1,6 +1,6 @@
 #include "gameboard.h"
 
-#define PLAYER_SIZE 35
+#define PLAYER_SIZE 30
 #define ENEMY_SIZE 50
 
 GameBoard::GameBoard(qreal x, qreal y, qreal width, qreal height) : QGraphicsScene(x, y, width, height)
@@ -8,6 +8,7 @@ GameBoard::GameBoard(qreal x, qreal y, qreal width, qreal height) : QGraphicsSce
     drawGameBoard();
     addPlayer();
     addEnemies();
+    addGameOverText();
 }
 
 void GameBoard::drawGameBoard()
@@ -41,9 +42,9 @@ void GameBoard::addWalls()
 
 void GameBoard::addPlayer()
 {
-    player = new Player(PLAYER_SIZE);
+    player = new Player(PLAYER_SIZE, this);
     this->addItem(player);
-    player->setPos(400, 300);
+    player->setPos(7 * wallFragmentWidth + (wallFragmentWidth - PLAYER_SIZE) / 2, 6 * wallFragmentHeight + (wallFragmentHeight - PLAYER_SIZE) / 2);
 }
 
 void GameBoard::addEnemies()
@@ -59,7 +60,7 @@ Enemy* GameBoard::createEnemy()
 {
     int randomRow = qrand() % rowsNumber;
     int randomColumn = qrand() % columnsNumber;
-    while (gameBoard[randomRow][randomColumn] == 1)
+    while (randomRow == 6 || gameBoard[randomRow][randomColumn] == 1)
     {
         randomRow = qrand() % gameBoard.size();
         randomColumn = qrand() % gameBoard[0].size();
@@ -70,4 +71,18 @@ Enemy* GameBoard::createEnemy()
     Enemy* enemy = new Enemy(ENEMY_SIZE, this);
     enemy->setPos(randomColumn * wallFragmentWidth, randomRow * wallFragmentHeight);
     return enemy;
+}
+
+void GameBoard::addGameOverText()
+{
+    gameOverText->setFont(QFont("Times", 15, QFont::Bold));
+    gameOverText->setDefaultTextColor(QColor("red"));
+    gameOverText->setPos((width() - gameOverText->boundingRect().width()) / 2, (height() - gameOverText->boundingRect().height()) / 2);
+    gameOverText->setVisible(false);
+    addItem(gameOverText);
+}
+
+void GameBoard::showGameOverText()
+{
+    gameOverText->setVisible(true);
 }

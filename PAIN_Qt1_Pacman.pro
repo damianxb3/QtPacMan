@@ -36,6 +36,7 @@ HEADERS  += \
     direction.h \
     enemy.h \
     wall.h \
-    pickup.h
+    pickup.h \
+    colors.h
 
 FORMS    +=

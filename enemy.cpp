@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "colors.h"
 #include <QDebug>
 
 Enemy::Enemy(qreal size, GameBoard* gameBoard)
@@ -10,7 +11,7 @@ Enemy::Enemy(qreal size, GameBoard* gameBoard)
     polygon << QPointF(0, 0) << QPointF(size, 0) << QPointF(size, size) << QPointF(0, size);
     setPolygon(polygon);
 
-    setBrush(QColor("blue"));
+    setBrush(colors[qrand() % colors.size()]);
     setPen(Qt::NoPen);
 
     setMoveTimer();
@@ -28,7 +29,7 @@ void Enemy::setAnimationTimer()
 {
     QTimer* timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(changeShape()));
-    timer->start(1000);
+    timer->start(200);
 }
 
 void Enemy::move()
@@ -39,23 +40,6 @@ void Enemy::move()
 
 void Enemy::detectColisions()
 {
-    qreal xNew = x();
-    qreal yNew = y();
-    switch (movingDirection) {
-        case UP:
-            yNew -= ENEMY_SPEED;
-            break;
-        case DOWN:
-            yNew += ENEMY_SPEED;
-            break;
-        case LEFT:
-            xNew -= ENEMY_SPEED;
-            break;
-        case RIGHT:
-            xNew += ENEMY_SPEED;
-            break;
-    }
-
     foreach (QGraphicsItem* item, collidingItems())
     {
         Wall* wall = qgraphicsitem_cast<Wall*>(item);
@@ -146,7 +130,7 @@ void Enemy::changeShape()
     }
     else
     {
-        polygon << QPointF(0, 0) << QPointF(size, 0) << QPointF(size, size) << QPointF(0, size);
+        polygon << QPointF(0, 0) << QPointF(size, 0) << QPointF(size, size) << QPointF(size/2, size/2);
     }
     setPolygon(polygon);
 

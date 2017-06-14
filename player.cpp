@@ -1,7 +1,9 @@
+#include <QDebug>
 #include "player.h"
 
-Player::Player(qreal size)
+Player::Player(qreal size, GameBoard* gameBoard)
 {
+    this->gameBoard = gameBoard;
     movingDirection = RIGHT;
     setRect(0, 0, size, size);
     setTransformOriginPoint(QPoint(size/2, size/2));
@@ -15,16 +17,14 @@ Player::Player(qreal size)
 
 void Player::setMoveTimer()
 {
-    QTimer* timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
-    timer->start(10);
+    connect(moveTimer, SIGNAL(timeout()), this, SLOT(move()));
+    moveTimer->start(10);
 }
 
 void Player::setAnimationTimer()
 {
-    QTimer* timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(openCloseMouth()));
-    timer->start(250);
+    connect(animationTimer, SIGNAL(timeout()), this, SLOT(openCloseMouth()));
+    animationTimer->start(250);
 }
 
 void Player::keyPressEvent(QKeyEvent *event)
@@ -59,16 +59,19 @@ void Player::detectColisions()
         if (qgraphicsitem_cast<Wall*>(item) != NULL)
         {
             onWallCollision();
+            break;
         }
         if (qgraphicsitem_cast<Enemy*>(item) != NULL)
         {
             onEnemyCollision();
+            break;
         }
 
         Pickup* pickup = qgraphicsitem_cast<Pickup*>(item);
         if (pickup != NULL)
         {
             onPickupCollision(pickup);
+            break;
         }
     }
 }
@@ -77,11 +80,14 @@ void Player::onWallCollision()
 {
     if (movingDirection == UP)
     {
+
+        qDebug() << "UPcollision";
         tryToChangePosition(x(), y() + PLAYER_SPEED);
         changeDirection(DOWN);
     }
     else if (movingDirection == DOWN)
     {
+        qDebug() << "DOWNcollision";
         tryToChangePosition(x(), y() - PLAYER_SPEED);
         changeDirection(UP);
     }
@@ -118,7 +124,10 @@ void Player::changeDirection(Direction direction)
 
 void Player::onEnemyCollision()
 {
-    delete this;
+    moveTimer->stop();
+    animationTimer->stop();
+    setSpanAngle(310 * 16);
+    gameBoard->showGameOverText();
 }
 
 void Player::onPickupCollision(Pickup* pickup)
@@ -173,5 +182,5 @@ void Player::openCloseMouth()
 {
     static bool open = false;
     open = !open;
-    setSpanAngle(open ? 360 * 16 : 310 * 16);
+    setSpanAngle(open ? 310 * 16 : 360 * 16);
 }
